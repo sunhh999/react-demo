@@ -1,25 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+
+// 函数组件的创建和渲染
+// 创建
+function Hello() {
+  return <div>hello</div>
+}
+
+// 类组件
+class HelloComponeny extends React.Component {
+  render() {
+    return <div>this is class Component</div>
+  }
+}
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* 渲染hello组件 */}
+      <Hello></Hello>
+
+      {/* 渲染class 类组件 */}
+      <HelloComponeny></HelloComponeny>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
