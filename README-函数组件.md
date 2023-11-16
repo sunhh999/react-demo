@@ -86,7 +86,9 @@ function Hello(){
 ## 类组件
 
 - **类组件**也**必须是以大写字母开头**
-- 类组件是以**extends**继承**React.Component**父类，从而使用父类中提供的方法或属性
+- 类组件是以 **extends** 继承**React.Component**父类，从而使用父类中提供的方法或属性
+- 
+- 
 - 类组件必须提供**render**方法，必须有返回值，表示该组件的 UI 结构
 
 ```jsx
@@ -167,7 +169,7 @@ function Hello() {
 }
 ```
 
-#### 
+==!注意==
 
 获取自定义事件参数
 
@@ -575,11 +577,214 @@ const {Provider, consumer } = createContext()
 
 ## React组件进阶
 
+### 特殊的 children
+
 - 只要在组件标签的内部写了任何的内容，都是传递给children 属性
+  - children 内部可以展示的内容
+    - 普通文本
+    - 普通标签元素
+    - 函数
+    - JSX
 
-### children
+```js
+// 函数组件 接受父组件数据
+function ChildComponent2({chidren }) {
+  // props 是一个对象 里面存储了父组件传递过来的数据
+ // getChildMsg 父组件用来接受子组件的参数事件
+  return (
+    <>
+      <div>我是`ChildComponent2`:接受到的父组件的数据{msg}</div>
+     
+      <button type="button>
+       	可以接受到 父组件在子组件中写的内: {{chidren }}
+      </button>
+    </>
+  )
+}
+
+
+
+// 父组件
+class App extends React.Component {
+
+  getChildMsg = (msg) => {
+    console.log('本身数据', '接受数据', msg)
+  }
+
+  render() {
+    return (
+      <div className="App">
+        {/* 函数组件 */}
+        <ChildComponent2>
+          内容可以被children 接受
+				</ChildComponent2>
+      </div>
+    )
+  }
+}
+```
+
+
+
+### props 类型效验
+
+1. react 的效验需要使用 `prop-types` 包
+2. `yarn add prop-types`
+3. 使用 `组件名.protypes = {}` 给组件添加效验规则
+
+**四种常见结构**
+
+1. 常见类型：array、bool、func、number、object、string
+
+2. React元素类型：element
+3. 必填项：isReauired
+4. 特定的机构对象: shape({})
+
+```js
+// 常见类型
+optionalFun:ProTypes.func
+
+// 必选
+requiredFunc:ProTypes.func.isRequired
+
+// 特定结构的对象
+optionalobjectwithShape: PropTypes.shape({ color: 	 PropTypes.string,
+fontSize: PropTypes.number
+})
+```
+
+官方文档：https://zh-hans.react.dev/reference/react/Component#props
+
+```js
+
+PropVerify.propTypes = {
+  // 需要一个 list 是必须传递的参数
+  list:PropTypes.array.isRequired
+}
+
+// 类型效验
+function PropVerify (){
+  return (
+    <>
+      <div>PropDefault</div>
+    </>
+  )
+}
+
+
+class App extends React.Component {
+
+  render() {
+    return (
+        {/* 组件效验 prop */}
+        <PropVerify></PropVerify>
+      </div>
+    )
+  }
+}
+```
+
+
+
+### 传递参数默认值
+
+#### 函数function
+
+```js
+// 函数组件的默认值
+function PropFnDefault({pageSize =20}) {
+  return (
+    <>
+    <div>{pageSize}</div>
+    </>
+  )
+}
+```
+
+
+
+第二种
+
+```js
+
+// 函数组件的默认值
+function PropFnDefault({pageSize}) {
+  return (
+    <>
+    <div>{pageSize}</div>
+    </>
+  )
+}
+
+// 添加默认值 默认不传递就使用这个内容
+PropFnDefault.defaultProps = {
+  pageSize:10
+}
+```
+
+
+
+#### class 类组件
+
+```js
+
+// 类组件默认值
+class PropClassDefault extends React.Component {
+  // 静态类型
+  static defaultProps  ={
+    limit: 25
+  }
+
+  render() {
+    return (
+      <>
+        <div>{this.props.limit}</div>
+      </>
+    )
+  }
+}
+```
+
+```js
+
+// 类组件默认值
+class PropClassDefault extends React.Component {
+
+  render() {
+    return (
+      <>
+        <div>{this.props.limit}</div>
+      </>
+    )
+  }
+}
+// 会有类名访问先后次序的问题
+PropClassDefault.defaultProps = {
+  limit: 23
+}
+```
 
 
 
 
+
+# React 组件-生命周期
+
+> 组件的生命周期是指组件从被创建到挂载到页面中运行起来，再到组件不用时卸载的过程，注意，**只有类组件才有生命周期** (`类组件` 实力化 函数组件不需要实例化)
+
+查看 生命周期的网站：https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/
+
+三个阶段
+
+- 挂载阶段
+  - 组件挂载阶段执行的钩子函数和执行时机
+  - `consructor` => `render` => `componentDidMount`
+    - **consructor** 创建组件时，最先执行，初始化的时候只执行一次，作用是初始化 **state** 创建 Ref 使用 **bind** 解决**this** 指向问题等
+    - **render** 每次组件渲染都会触发 ， 渲染UI (==注意==: 不能在里面调用 **setState()**)
+    - **componentDidMount** 组件挂载(**完成DOM渲染**) 后执行，初始化的时候执行一次 、发送网络请求 DOM操作
+- 更新阶段
+  - **render** 每次组件渲染都会触发 渲染UI (与挂载阶段是同一个**render**)
+  - **componentDidUpdate**  组件更新后(DOM渲染完毕) DOM操作,可以获取到**更新后的DOM内容**,
+- 卸载时
+  - **componentWillUnmount** 组件卸载(从页面消失) 执行清理工作(比如:**清理定时器**等)
 

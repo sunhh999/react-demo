@@ -1,150 +1,62 @@
-import React, { createContext } from 'react'
-import { InputComState, InputComStateRef } from './pages/inputComState'
+import React from 'react'
 
-// 函数组件的创建和渲染
-// 创建
-function Hello() {
-  return <div>hello</div>
-}
+class Test extends React.Component {
+  // 如果数据时组件的状态 需要去影响视图 则需要定义到state中
+  // 而如果我们需要的数组状态 不和试图绑定 不影响UI渲染 那就可以定义成一个普通的实例属性就行
+  timer = null
+  componentDidMount(){
+    this.timer = setInterval(()=>{
+      console.log('定时器触发');
+    },1000)
+  }
+  
+  componentWillUnmount() {
+    // 清理定时器
+    clearInterval(this.timer)
+    console.log('componentWillUnmount,组件销毁时会被触发')
+  }
 
-// 类组件
-class HelloComponent extends React.Component {
-  render() {
-    return <div>this is class Component</div>
+  render(){
+    return (
+      <div>Test组件 模拟组件卸载</div>
+    )
   }
 }
 
-// 类子组件 接受父组件数据
-class ChildComponent extends React.Component {
-  render() {
-    // 类组件必须使用this 关键词才能获取到props上的数据
-    return <div>我是`ChildComponent`:接受到的父组件的数据{this.props.msg}</div>
-  }
-}
-
-// 函数组件 接受父组件数据
-function ChildComponent2({ msg, getChildMsg }) {
-  // props 是一个对象 里面存储了父组件传递过来的数据
-
-  // 子组件如何调用父组件不受限制
-  function ContentFn() {
-    console.log('1')
-    getChildMsg('ChildComponent2组件的数据2')
-  }
-
-  return (
-    <>
-      <div>我是`ChildComponent2`:接受到的父组件的数据{msg}</div>
-      {/* getChildMsg('ChildComponent2组件的数据2') 立即执行 */}
-      {/* ()=> getChildMsg('ChildComponent2组件的数据2') 触发执行 */}
-      <button type="button" onClick={() => ContentFn()}>
-        ChildComponent2组件的数据 将子数据传递给父组件
-      </button>
-    </>
-  )
-}
-
-// 兄弟组件传值
-
-// 兄弟组件1
-// 通过公共的父组件传递数据
-function BrotherComponent1({ getBrotherMsg }) {
-  return (
-    <>
-      <div>BrotherComponent1</div>
-      <button
-        onClick={() => {
-          getBrotherMsg('BrotherComponent1的传递的数据')
-        }}>
-        Brother1 button
-      </button>
-    </>
-  )
-}
-
-// 兄弟组件2
-function BrotherComponent2({ BorderVal }) {
-  return (
-    <>
-      <div>BrotherComponent2</div>
-      <div>接受到兄弟组件传递的数据：{BorderVal}</div>
-    </>
-  )
-}
-
-const { Provider, Consumer } = createContext()
-
-/**
- * 非父子组件传参
- */
-// 提供数据
-function ProvideCon() {
-  return (
-    <>
-      <div>ChildComponent3</div>
-      <ConsumerCon></ConsumerCon>
-    </>
-  )
-}
-
-// 消费者
-function ConsumerCon() {
-  return (
-    <>
-      <Consumer>{(value) => <div>ConsumerCon接受到的数据：{value}</div>}</Consumer>
-    </>
-  )
-}
-// 测试
 class App extends React.Component {
+  constructor() {
+    super()
+  }
+
   state = {
-    name: '父组件的数据2-隔代传递的数据',
-    BorderVal: ''
+    count: 0,
+    flag: true
   }
 
-  getChildMsg = (msg) => {
-    console.log('本身数据', '接受数据', msg)
-  }
-
-  // 兄弟组件传值 父组件进行接受
-  getBrotherMsg = (msg) => {
-    console.log('父组件进行接受', msg)
-    // 父组件存储 border 组件传递过来的数据
+  handleAddCount = () => {
     this.setState({
-      BorderVal: msg
+      count: this.state.count + 1,
+      flag: !this.state.flag
     })
   }
 
+  componentDidMount() {
+    console.log('componentDidMount,初始化时触发，此时DOM渲染完成')
+  }
+
+  componentDidUpdate() {
+    console.log('componentDidUpdate,数据发生改变就会触发')
+    console.log(this.state.flag,'flag');
+  }
   render() {
+    console.log('render函数只会在渲染UI的时候触发')
+    // console.log('componentDidMount =》 同一个render 《= componentDidUpdate')
     return (
-      <div className="App">
-        {/* 渲染hello组件 */}
-        <Hello></Hello>
-
-        {/* 渲染class 类组件 */}
-        <HelloComponent></HelloComponent>
-
-        {/* input */}
-        <InputComState></InputComState>
-
-        {/* 不受控组件 */}
-        <InputComStateRef></InputComStateRef>
-
-        {/* 类子组件 */}
-        <ChildComponent msg={this.state.name}></ChildComponent>
-
-        {/* 函数组件 */}
-        <ChildComponent2 getChildMsg={this.getChildMsg} msg={this.state.name}></ChildComponent2>
-
-        {/* 兄弟组件 传递 1 */}
-        <BrotherComponent1 getBrotherMsg={this.getBrotherMsg}></BrotherComponent1>
-        {/* 兄弟组件 接受 2 */}
-        <BrotherComponent2 BorderVal={this.state.BorderVal}></BrotherComponent2>
-
-        <Provider value={this.state.name}>
-          {/* ProvideCon 隔代传参 */}
-          <ProvideCon></ProvideCon>
-        </Provider>
+      <div>
+        {/* 渲染的数据 */}
+        计数器 <button onClick={() => this.handleAddCount()}>{this.state.count}</button>
+        {/* 数据状态切换 */}
+        {this.state.flag ? <Test></Test> : '没有被卸载'}
       </div>
     )
   }
