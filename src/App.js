@@ -1,65 +1,43 @@
-import React from 'react'
+import { useState } from 'react'
 
-class Test extends React.Component {
-  // 如果数据时组件的状态 需要去影响视图 则需要定义到state中
-  // 而如果我们需要的数组状态 不和试图绑定 不影响UI渲染 那就可以定义成一个普通的实例属性就行
-  timer = null
-  componentDidMount(){
-    this.timer = setInterval(()=>{
-      console.log('定时器触发');
-    },1000)
-  }
-  
-  componentWillUnmount() {
-    // 清理定时器
-    clearInterval(this.timer)
-    console.log('componentWillUnmount,组件销毁时会被触发')
-  }
+/**
+ * userState
+ * 1.导入useState 函数 react
+ * 2.执行这个函数并且传入初始值
+ * 3.[数据，修改数据的方法]
+ * 4.使用数据修改数据
+ */
 
-  render(){
-    return (
-      <div>Test组件 模拟组件卸载</div>
-    )
-  }
-}
+/**
+ * 状态的读取和修改
+ * const [count, setCount] = useState(0)
+ * 1.useState 传过来的参数 作为 count的初始值 
+ * 2.[count, setCount] 这里的写法是一个结构赋值 useState 返回值是一个数组
+ *   名字可以是任何值 但是要和 useState 传过来的参数一致 保持语义一致
+ * 3.setCount 是一个函数 用来修改 count 的值 以来保持不能直接修改 count的原来值，还是生成一个新值替换原值setCount
+ */
 
-class App extends React.Component {
-  constructor() {
-    super()
-  }
 
-  state = {
-    count: 0,
-    flag: true
-  }
+// 首次渲染
 
-  handleAddCount = () => {
-    this.setState({
-      count: this.state.count + 1,
-      flag: !this.state.flag
-    })
-  }
+// 首次被渲染的时候组件内部的代码会被执行一次
+// 其中useState也会跟着执行这里重点注意初始值只在首次渲染时生效
 
-  componentDidMount() {
-    console.log('componentDidMount,初始化时触发，此时DOM渲染完成')
-  }
+//更新渲染
+//  setCount都会更新
 
-  componentDidUpdate() {
-    console.log('componentDidUpdate,数据发生改变就会触发')
-    console.log(this.state.flag,'flag');
-  }
-  render() {
-    console.log('render函数只会在渲染UI的时候触发')
-    // console.log('componentDidMount =》 同一个render 《= componentDidUpdate')
-    return (
-      <div>
-        {/* 渲染的数据 */}
-        计数器 <button onClick={() => this.handleAddCount()}>{this.state.count}</button>
-        {/* 数据状态切换 */}
-        {this.state.flag ? <Test></Test> : '没有被卸载'}
-      </div>
-    )
-  }
+function App() {
+  // count :数据状态
+  // setCount :修改count状态的专有函数
+  const [count, setCount] = useState(0)
+  return (
+    <div>
+      <h1>计数器</h1>
+      <button onClick={() => setCount(count + 1)}>+</button>
+      <button onClick={() => setCount(count - 1)}>-</button>
+      <p>{count}</p>
+    </div>
+  )
 }
 
 export default App
