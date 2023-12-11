@@ -4,6 +4,8 @@ import './index.css'
 import App from './App'
 // import './pages/rem.js'
 
+import Context from './contex'
+
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   // 严格模式节点 去掉
@@ -13,7 +15,9 @@ root.render(
   // 3. 严格模式下，useLayoutEffect 会执行两次
   // 4. 严格模式下，useLayoutEffect 会比 useEffect 先执行
   // <React.StrictMode>
-  <App />
+  <Context.Provider value={{ name: '小明', age: 20 }}>
+    <App />
+  </Context.Provider>
   // </React.StrictMode>
 )
 
