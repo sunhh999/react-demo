@@ -1,6 +1,6 @@
 // 隔代传参数 hooks 版本
 
-import {  useContext } from 'react'
+import { useContext } from 'react'
 import Context from './contex'
 
 // 1.创建上下文
@@ -15,8 +15,7 @@ function Child() {
       <p>姓名：{ctx.name}</p>
       <p>年龄：{ctx.age}</p>
 
-      <Child2/>
-        
+      <Child2 />
     </div>
   )
 }
@@ -36,9 +35,9 @@ function Child2() {
 function App() {
   return (
     // <Context.Provider value={{ name: '小明', age: 18 }}>
-      <div>
-        <Child />
-      </div>
+    <div>
+      <Child />
+    </div>
     // </Context.Provider>
   )
 }

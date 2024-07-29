@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import App from './App'
-// import './pages/rem.js'
 
 import Context from './contex'
 
@@ -17,7 +16,7 @@ root.render(
   // <React.StrictMode>
   <Context.Provider value={{ name: '小明', age: 20 }}>
     <App />
-  </Context.Provider>
+   </Context.Provider>
   // </React.StrictMode>
 )
 
